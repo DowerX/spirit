@@ -1,5 +1,10 @@
-#version 330 core
+#version 410 core
+
+in vec3 norm_c;
+in vec3 text_c;
+
 out vec4 FragColor;
+
 void main() {
-  FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+  FragColor = vec4(norm_c, 1.0f);
 }
