@@ -1,7 +1,9 @@
 #include <GLFW/glfw3.h>
 #include <engine/app.h>
 #include <glad/glad.h>
+#include <functional>
 #include <stdexcept>
+#include "engine/assets/mesh.h"
 
 namespace Engine {
 void resize_callback(GLFWwindow*, int width, int height) {
@@ -12,8 +14,8 @@ App::App(uint32_t width, uint32_t height) {
   if (glfwInit() != GL_TRUE)
     throw std::runtime_error("failed to initialize GLFW");
 
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   window = glfwCreateWindow(width, height, "opengl-test", nullptr, nullptr);
@@ -28,19 +30,21 @@ App::App(uint32_t width, uint32_t height) {
   glfwSetFramebufferSizeCallback(window, resize_callback);
 
   glClearColor(0.2, 0.3, 0.3, 1);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
 }
 
 App::~App() {
   glfwTerminate();
 }
 
-void App::run() {
+void App::run(const std::function<void()>& loop) {
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
     process_input();
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    loop();
 
     glfwSwapBuffers(window);
   }

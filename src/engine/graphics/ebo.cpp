@@ -3,7 +3,7 @@
 #include <vector>
 
 namespace Engine::Graphics {
-EBO::EBO(const std::vector<GLuint>& indices) {
+EBO::EBO(const std::vector<GLuint>& indices) : size(indices.size()) {
   glGenBuffers(1, &id);
   bind();
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
