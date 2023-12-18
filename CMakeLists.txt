@@ -21,12 +21,16 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 find_package(glfw3 3.3 REQUIRED)
 find_package(glm REQUIRED)
 
+# glad
+add_library("glad" SHARED "${CMAKE_SOURCE_DIR}/src/glad/glad.c")
+target_include_directories("glad" PRIVATE "${CMAKE_SOURCE_DIR}/inc")
+
 # engine
-file(GLOB_RECURSE ENGINE_SOURCES "${CMAKE_SOURCE_DIR}/src/engine/*.cpp" "${CMAKE_SOURCE_DIR}/src/glad/glad.c")
+file(GLOB_RECURSE ENGINE_SOURCES "${CMAKE_SOURCE_DIR}/src/engine/*.cpp")
 add_library("engine" SHARED ${ENGINE_SOURCES})
 set_target_properties("engine" PROPERTIES VERSION ${PROJECT_VERSION})
 target_include_directories("engine" PRIVATE "${CMAKE_SOURCE_DIR}/inc")
-target_link_libraries("engine" glfw glm)
+target_link_libraries("engine" glfw glm glad)
 
 # game
 file(GLOB_RECURSE GAME_SOURCES "${CMAKE_SOURCE_DIR}/src/game/*.cpp")

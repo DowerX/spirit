@@ -1,7 +1,10 @@
 #pragma once
 
+#include <cstddef>
 #include <string>
 #include <vector>
 namespace Engine::Utility {
 std::vector<std::string> split(const std::string& input, char delimiter);
+bool get_opengl_errors();
+bool get_opengl_errors(size_t line);
 } // namespace Engine::Utility

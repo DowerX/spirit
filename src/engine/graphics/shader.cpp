@@ -1,5 +1,6 @@
 #include <engine/graphics/shader.h>
 #include <engine/types/vector.h>
+#include <engine/utility.h>
 #include <fstream>
 #include <glm/fwd.hpp>
 #include <glm/glm.hpp>
@@ -11,6 +12,7 @@
 #include <string>
 
 using namespace Engine::Types;
+using namespace Engine::Utility;
 
 namespace Engine::Graphics {
 
@@ -42,7 +44,9 @@ Shader::Shader(const char* vert_src, const char* frag_src) {
 
   int success = 1;
   char info[512];
-  glGetShaderiv(id, GL_LINK_STATUS, &success);
+  get_opengl_errors(__LINE__);
+  glGetProgramiv(id, GL_LINK_STATUS, &success);
+  get_opengl_errors(__LINE__);
   if (!success) {
     glGetShaderInfoLog(id, 512, nullptr, info);
     throw std::runtime_error(info);
@@ -76,8 +80,6 @@ std::shared_ptr<Shader> Shader::from_file(const std::string& vert_path, const st
   sstream << frag_file.rdbuf();
   frag_file.close();
   std::string frag_src = sstream.str();
-
-  std::cout << vert_src << std::endl << frag_src << std::endl;
 
   return std::make_shared<Shader>(vert_src.c_str(), frag_src.c_str());
 }

@@ -3,10 +3,9 @@
 #include <engine/types/vector.h>
 #include <engine/utility.h>
 #include <algorithm>
-#include <cstddef>
 #include <fstream>
-#include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -17,7 +16,7 @@ using namespace Engine::Graphics;
 using namespace Engine::Types;
 
 namespace Engine::Assets::Loaders {
-Mesh obj(const std::string& path) {
+std::shared_ptr<Mesh> obj(const std::string& path) {
   std::ifstream file(path);
   if (!file.is_open())
     throw std::runtime_error("failed to open OBJ file: " + path);
@@ -66,19 +65,20 @@ Mesh obj(const std::string& path) {
     buffer.push_back(vertex.get(0));
     buffer.push_back(vertex.get(1));
     buffer.push_back(vertex.get(2));
-    Vector<3, GLfloat> normal = normals[std::get<1>(point)];
+    Vector<3, GLfloat> normal = normals[std::get<3>(point)];
     buffer.push_back(normal.get(0));
     buffer.push_back(normal.get(1));
     buffer.push_back(normal.get(2));
-    Vector<2, GLfloat> texture = texture_coordinates[std::get<1>(point)];
+    Vector<2, GLfloat> texture = texture_coordinates[std::get<2>(point)];
     buffer.push_back(texture.get(0));
     buffer.push_back(texture.get(1));
   }
 
-  return Mesh(buffer, indices,
-              std::vector<VAO::Attribute>{
-                  {.index = 0, .size = 3, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = 8 * sizeof(float), .offset = (void*)0},
-                  {.index = 1, .size = 3, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = 8 * sizeof(float), .offset = (void*)(3 * sizeof(float))},
-                  {.index = 2, .size = 2, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = 8 * sizeof(float), .offset = (void*)(6 * sizeof(float))}});
+  return std::make_shared<Mesh>(
+      buffer, indices,
+      std::vector<VAO::Attribute>{
+          {.index = 0, .size = 3, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = 8 * sizeof(float), .offset = (void*)0},
+          {.index = 1, .size = 3, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = 8 * sizeof(float), .offset = (void*)(3 * sizeof(float))},
+          {.index = 2, .size = 2, .type = GL_FLOAT, .normalized = GL_FALSE, .stride = 8 * sizeof(float), .offset = (void*)(6 * sizeof(float))}});
 }
 } // namespace Engine::Assets::Loaders

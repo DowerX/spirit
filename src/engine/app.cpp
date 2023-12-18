@@ -2,15 +2,19 @@
 #include <engine/app.h>
 #include <glad/glad.h>
 #include <functional>
+#include <map>
 #include <stdexcept>
 #include "engine/assets/mesh.h"
 
 namespace Engine {
-void resize_callback(GLFWwindow*, int width, int height) {
-  glViewport(0, 0, width, height);
+
+std::map<GLFWwindow*, std::function<void(int, int)>> windowCallbacks;
+
+void resize_callback(GLFWwindow* window, int width, int height) {
+  windowCallbacks[window](width, height);
 }
 
-App::App(uint32_t width, uint32_t height) {
+App::App(uint32_t width, uint32_t height) : width(width), height(height) {
   if (glfwInit() != GL_TRUE)
     throw std::runtime_error("failed to initialize GLFW");
 
@@ -27,11 +31,15 @@ App::App(uint32_t width, uint32_t height) {
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     throw std::runtime_error("failed to initialize GLAD");
 
+  windowCallbacks[window] = [&](int width, int height) { glViewport(0, 0, width, height); this->width = width; this->height = height; };
   glfwSetFramebufferSizeCallback(window, resize_callback);
 
   glClearColor(0.2, 0.3, 0.3, 1);
+
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
+
+  glEnable(GL_CULL_FACE);
 }
 
 App::~App() {

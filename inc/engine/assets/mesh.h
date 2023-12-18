@@ -16,6 +16,7 @@ class Mesh : public Drawable {
 
  public:
   Mesh(const std::vector<GLfloat> vertices, const std::vector<GLuint> indices, std::vector<Graphics::VAO::Attribute> attributes);
+  ~Mesh() {}
 
   void draw() override;
 };

@@ -2,3 +2,6 @@
 .vscode
 build/*
 !build/assets
+
+assets/*
+!assets/shaders
