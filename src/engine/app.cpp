@@ -13,7 +13,7 @@ void resize_callback(GLFWwindow* window, int width, int height) {
   windowCallbacks[window](width, height);
 }
 
-App::App(const Config& config) : width(config.width), height(config.height){
+App::App(const Config& config) : width(config.width), height(config.height) {
   if (glfwInit() != GL_TRUE)
     throw std::runtime_error("failed to initialize GLFW");
 
@@ -21,7 +21,7 @@ App::App(const Config& config) : width(config.width), height(config.height){
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  window = glfwCreateWindow(width, height, config.title.c_str(), nullptr, nullptr);
+  window = glfwCreateWindow(width, height, config.title.c_str(), config.monitor, nullptr);
   if (window == nullptr)
     throw std::runtime_error("failed to create a window");
 
@@ -52,9 +52,14 @@ App::~App() {
 }
 
 void App::run(const std::function<void()>& loop) {
+  float last_time = 0;
   while (!glfwWindowShouldClose(window)) {
+    delta_time = glfwGetTime() - last_time;
+    last_time = glfwGetTime();
+    
     glfwPollEvents();
     process_input();
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     loop();

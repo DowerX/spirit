@@ -1,3 +1,4 @@
+#include <GLFW/glfw3.h>
 #include <engine/app.h>
 #include <engine/assets/loaders/obj.h>
 #include <engine/assets/loaders/png.h>
@@ -9,7 +10,6 @@
 #include <engine/graphics/shader.h>
 #include <engine/utility.h>
 #include <exception>
-#include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -38,10 +38,16 @@ int main() {
     assets.set<Shader>("basic", Shader::from_file("assets/shaders/basic/basic.vert", "assets/shaders/basic/basic.frag"));
 
     assets.set<Mesh>("cube", Loaders::obj("assets/meshes/cube/cube.obj"));
+    assets.set<Mesh>("suzanne", Loaders::obj("assets/meshes/suzanne/suzanne.obj"));
+
     assets.set<Texture>("rloi_mc", Loaders::png("assets/textures/cube.png"));
+
     assets.set<Material>("basic_rloi", std::make_shared<Material>(assets.get<Shader>("basic"), std::vector<TextureSlot>{{0, assets.get<Texture>("rloi_mc")}}));
 
-    assets.set<Model>("cube", std::make_shared<Model>(assets.get<Mesh>("cube"), assets.get<Material>("basic_rloi")));
+    assets.set<Model>("cube", std::make_shared<Model>(assets.get<Mesh>("cube"), assets.get<Material>("basic_rloi"), glm::vec3(-0.1f, 0.0f, 0.0f),
+                                                      glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f)));
+    assets.set<Model>("suzanne", std::make_shared<Model>(assets.get<Mesh>("suzanne"), assets.get<Material>("basic_rloi"), glm::vec3(0.1f, 0.0f, 0.0f),
+                                                         glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f)));
 
     // gameloop
     app->run([&]() {
@@ -52,13 +58,17 @@ int main() {
       shader->set<glm::mat4>("view", view);
       shader->set<glm::mat4>("projection", proj);
 
-      glm::mat4 model = glm::translate(
-          glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f)), (float)glm::degrees(0.01f * glfwGetTime()), glm::vec3(1.0f, 1.0f, 1.0f)),
-          glm::vec3(-1.5f, 0.0f, 0.0f));
-      shader->set<glm::mat4>("model", model);
+      auto cube = assets.get<Model>("cube");
+      float size = (sin(glfwGetTime()) + 1.0f) / 30 + 0.02f;
+      cube->set_scale(glm::vec3(size, size, size));
+      cube->rotate(glm::vec3(10.0f, 10.0f, 10.0f) * app->get_delta_time());
 
-      // draw cube
-      assets.get<Model>("cube")->draw();
+      cube->draw();
+      auto suzanne = assets.get<Model>("suzanne");
+      suzanne->set_scale(glm::vec3(size, size, size));
+      suzanne->rotate(glm::vec3(10.0f, 10.0f, 10.0f) * app->get_delta_time());
+
+      suzanne->draw();
 
       CHECK_ERRORS
     });
