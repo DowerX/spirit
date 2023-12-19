@@ -1,3 +1,5 @@
+#pragma once
+
 #include <engine/assets/mesh.h>
 #include <string>
 

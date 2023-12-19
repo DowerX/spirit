@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2b")            # std c++23
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGLFW_INCLUDE_NONE")   # disable gfwl opengl
 
 if(DEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")                  # debug symbols
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DDEBUG")          # debug symbols
 endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")                   # optimisations
@@ -20,10 +20,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 # dependencies
 find_package(glfw3 3.3 REQUIRED)
 find_package(glm REQUIRED)
+find_package(OpenGL REQUIRED)
 
 # glad
 add_library("glad" SHARED "${CMAKE_SOURCE_DIR}/src/glad/glad.c")
 target_include_directories("glad" PRIVATE "${CMAKE_SOURCE_DIR}/inc")
+target_link_libraries("glad" OpenGL::OpenGL)
 
 # engine
 file(GLOB_RECURSE ENGINE_SOURCES "${CMAKE_SOURCE_DIR}/src/engine/*.cpp")

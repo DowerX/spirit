@@ -1,4 +1,4 @@
-#version 410 core
+#version 330 core
 
 in vec3 norm_c;
 in vec2 text_c;

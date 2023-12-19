@@ -1,8 +1,14 @@
 #include <engine/app.h>
-#include <engine/assets/loaders.h>
+#include <engine/assets/loaders/obj.h>
+#include <engine/assets/loaders/png.h>
+#include <engine/assets/manager.h>
+#include <engine/assets/material.h>
 #include <engine/assets/mesh.h>
+#include <engine/assets/model.h>
 #include <engine/assets/texture.h>
 #include <engine/graphics/shader.h>
+#include <engine/utility.h>
+#include <exception>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -10,11 +16,10 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
-#include "engine/utility.h"
 
 using namespace Engine;
-using namespace Engine::Graphics;
 using namespace Engine::Assets;
+using namespace Engine::Graphics;
 using namespace Engine::Utility;
 
 int main() {
@@ -26,47 +31,41 @@ int main() {
     return 1;
   }
 
-  std::shared_ptr<Shader> shader;
+  Manager& assets = app->get_asset_manager();
+
+  // load assets
   try {
-    shader = Shader::from_file("assets/shaders/basic/basic.vert", "assets/shaders/basic/basic.frag");
-  } catch (std::runtime_error& e) {
+    assets.set<Shader>("basic", Shader::from_file("assets/shaders/basic/basic.vert", "assets/shaders/basic/basic.frag"));
+
+    assets.set<Mesh>("cube", Loaders::obj("assets/meshes/cube/cube.obj"));
+    assets.set<Texture>("rloi_mc", Loaders::png("assets/textures/cube.png"));
+    assets.set<Material>("basic_rloi", std::make_shared<Material>(assets.get<Shader>("basic"), std::vector<TextureSlot>{{0, assets.get<Texture>("rloi_mc")}}));
+
+    assets.set<Model>("cube", std::make_shared<Model>(assets.get<Mesh>("cube"), assets.get<Material>("basic_rloi")));
+
+    // gameloop
+    app->run([&]() {
+      auto shader = assets.get<Shader>("basic");
+      shader->use();
+      glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.3f));
+      glm::mat4 proj = glm::perspective(glm::radians(75.0f), app->get_aspect_ratio(), 0.001f, 100.0f);
+      shader->set<glm::mat4>("view", view);
+      shader->set<glm::mat4>("projection", proj);
+
+      glm::mat4 model = glm::translate(
+          glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f)), (float)glm::degrees(0.01f * glfwGetTime()), glm::vec3(1.0f, 1.0f, 1.0f)),
+          glm::vec3(-1.5f, 0.0f, 0.0f));
+      shader->set<glm::mat4>("model", model);
+
+      // draw cube
+      assets.get<Model>("cube")->draw();
+
+      CHECK_ERRORS
+    });
+  } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
-    return 1;
+    return -1;
   }
-  
-  std::shared_ptr<Mesh> mesh;
-  try {
-    mesh = Loaders::obj("assets/meshes/cube/cube.obj");
-    // mesh = Loaders::obj("assets/meshes/suzanne/suzanne.obj");
-    // mesh = Loaders::obj("assets/meshes/teapot/teapot.obj");
-  } catch (std::runtime_error& e) {
-    std::cerr << e.what() << std::endl;
-    return 1;
-  }
-
-  std::shared_ptr<Texture> texture;
-  try {
-    texture = Loaders::png("assets/textures/cube.png");
-  } catch (std::runtime_error& e) {
-    std::cerr << e.what() << std::endl;
-    return 1;
-  }
-
-  app->run([&]() {
-    shader->use();
-    texture->bind(0);
-    shader->set<int>("texture0", 0);
-    glm::mat4 model =
-        glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f)), (float)glm::degrees(0.01f * glfwGetTime()), glm::vec3(1.0f, 1.0f, 1.0f));
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.3f));
-    glm::mat4 proj = glm::perspective(glm::radians(75.0f), app->get_aspect_ratio(), 0.1f, 100.0f);
-
-    shader->set<glm::mat4>("view", view);
-    shader->set<glm::mat4>("projection", proj);
-    shader->set<glm::mat4>("model", model);
-
-    mesh->draw();
-  });
 
   return 0;
 }

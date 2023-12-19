@@ -10,9 +10,9 @@
 namespace Engine::Assets {
 class Mesh : public Drawable {
  private:
-  std::shared_ptr<Graphics::VBO> vbo;
-  std::shared_ptr<Graphics::EBO> ebo;
-  std::shared_ptr<Graphics::VAO> vao;
+  std::unique_ptr<Graphics::VBO> vbo;
+  std::unique_ptr<Graphics::EBO> ebo;
+  std::unique_ptr<Graphics::VAO> vao;
 
  public:
   Mesh(const std::vector<GLfloat> vertices, const std::vector<GLuint> indices, std::vector<Graphics::VAO::Attribute> attributes);

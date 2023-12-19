@@ -13,7 +13,7 @@ class VAO {
 
  public:
   struct Attribute {
-    std::shared_ptr<VBO> vbo;
+    GLuint vbo;
     GLuint index;
     GLuint size;
     GLuint type;

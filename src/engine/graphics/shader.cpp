@@ -44,9 +44,7 @@ Shader::Shader(const char* vert_src, const char* frag_src) {
 
   int success = 1;
   char info[512];
-  get_opengl_errors(__LINE__);
   glGetProgramiv(id, GL_LINK_STATUS, &success);
-  get_opengl_errors(__LINE__);
   if (!success) {
     glGetShaderInfoLog(id, 512, nullptr, info);
     throw std::runtime_error(info);

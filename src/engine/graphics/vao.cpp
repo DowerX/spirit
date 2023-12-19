@@ -7,7 +7,7 @@ VAO::VAO(const std::vector<Attribute>& attributes) {
   glGenVertexArrays(1, &id);
   glBindVertexArray(id);
   for (Attribute attribute : attributes) {
-    attribute.vbo->bind();
+    glBindBuffer(GL_ARRAY_BUFFER, attribute.vbo);
     glVertexAttribPointer(attribute.index, attribute.size, attribute.type, attribute.normalized, attribute.stride, attribute.offset);
     glEnableVertexAttribArray(attribute.index);
   }

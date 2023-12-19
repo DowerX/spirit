@@ -1,3 +1,5 @@
+#pragma once
+
 namespace Engine::Assets {
 class Drawable {
  public:

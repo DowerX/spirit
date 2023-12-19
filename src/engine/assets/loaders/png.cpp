@@ -35,7 +35,7 @@ std::shared_ptr<Texture> png(const std::string& path) {
       break;
   }
 
-  std::shared_ptr<Texture> texture = std::make_shared<Texture>(GL_TEXTURE_2D, GL_RGBA, width, height, format, GL_UNSIGNED_BYTE, data);
+  std::shared_ptr<Texture> texture = std::make_shared<Texture>(GL_TEXTURE_2D, format, width, height, format, GL_UNSIGNED_BYTE, data);
 
   stbi_image_free(data);
 

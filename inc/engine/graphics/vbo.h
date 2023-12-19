@@ -13,6 +13,8 @@ class VBO {
   VBO(const std::vector<GLfloat>& vertices);
   ~VBO();
 
+  GLuint get_id() const { return id; }
+
   void bind();
 };
 } // namespace Engine::Graphics
