@@ -21,7 +21,6 @@ class MeshRenderer : public Component {
   std::shared_ptr<Assets::Mesh> get_mesh() { return mesh; }
   std::shared_ptr<Assets::Material> get_material() { return material; }
 
-  void start() override;
-  void update(double,double delta_time) override;
+  void late_update(double, double) override;
 };
 } // namespace Engine::Objects::Components

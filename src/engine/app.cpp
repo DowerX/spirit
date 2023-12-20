@@ -64,17 +64,18 @@ void App::run(const std::function<void()>& loop) {
 #endif
 
   while (!glfwWindowShouldClose(window)) {
+    double time = glfwGetTime();
 #ifdef DEBUG
     frame_count++;
-    if (glfwGetTime() - last >= 1) {
-      glfwSetWindowTitle(window, std::to_string(frame_count / (glfwGetTime() - last)).c_str());
-      last = glfwGetTime();
+    if (time - last >= 1) {
+      glfwSetWindowTitle(window, std::to_string(frame_count / (time - last)).c_str());
+      last = time;
       frame_count = 0;
     }
 #endif
 
-    delta_time = glfwGetTime() - last_time;
-    last_time = glfwGetTime();
+    delta_time = time - last_time;
+    last_time = time;
 
     glfwPollEvents();
     process_input();
@@ -83,7 +84,9 @@ void App::run(const std::function<void()>& loop) {
 
     loop();
 
-    asset_manager.get_root_object()->update(glfwGetTime(), delta_time);
+    asset_manager.get_root_object()->early_update(time, delta_time);
+    asset_manager.get_root_object()->update(time, delta_time);
+    asset_manager.get_root_object()->late_update(time, delta_time);
 
     CHECK_ERRORS
 

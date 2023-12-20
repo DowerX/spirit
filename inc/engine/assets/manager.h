@@ -31,6 +31,9 @@ class Manager {
   template <typename T>
   std::shared_ptr<T> get(const std::string& name);
 
+  template<typename T>
+  std::map<std::string, std::shared_ptr<T>>& get_all();
+
   template <typename T>
   void remove(const std::string& name);
 };

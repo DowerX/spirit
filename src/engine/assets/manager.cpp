@@ -58,4 +58,21 @@ void Manager::remove<Material>(const std::string& name) {
   materials.erase(name);
 }
 
+template <>
+std::map<std::string, std::shared_ptr<Mesh>>& Manager::get_all<Mesh>() {
+  return meshes;
+}
+template <>
+std::map<std::string, std::shared_ptr<Graphics::Shader>>& Manager::get_all<Graphics::Shader>() {
+  return shaders;
+}
+template <>
+std::map<std::string, std::shared_ptr<Texture>>& Manager::get_all<Texture>() {
+  return textures;
+}
+template <>
+std::map<std::string, std::shared_ptr<Material>>& Manager::get_all<Material>() {
+  return materials;
+}
+
 } // namespace Engine::Assets

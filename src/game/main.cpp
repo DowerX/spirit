@@ -19,6 +19,7 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
+#include "engine/objects/components/camera.h"
 
 using namespace Engine;
 using namespace Engine::Assets;
@@ -49,6 +50,12 @@ int main() {
 
     assets.set<Material>("basic_rloi", std::make_shared<Material>(assets.get<Shader>("basic"), std::vector<TextureSlot>{{0, assets.get<Texture>("rloi_mc")}}));
 
+    auto camera = assets.get_root_object()->add_child("camera");
+    auto camera_transform = camera->get_component<Transform>();
+    camera_transform->set_position(glm::vec3(0.0f, 0.0f, -0.3f));
+    camera->add_component<Camera>();
+    camera->get_component<Camera>()->set_asset_manager(&assets);
+
     auto cube = assets.get_root_object()->add_child("cube");
     auto cube_mesh_renderer = cube->add_component<MeshRenderer>();
     cube_mesh_renderer->set_mesh(assets.get<Mesh>("cube"));
@@ -66,15 +73,7 @@ int main() {
     suzanne->add_component<Rotator>();
     suzanne->get_component<Rotator>()->set_scale(10);
 
-    auto shader = assets.get<Shader>("basic");
-    // gameloop
-    app->run([&]() {
-      shader->use();
-      glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.3f));
-      glm::mat4 proj = glm::perspective(glm::radians(75.0f), app->get_aspect_ratio(), 0.001f, 100.0f);
-      shader->set<glm::mat4>("view", view);
-      shader->set<glm::mat4>("projection", proj);
-    });
+    app->run([&]() {});
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
     return -1;

@@ -27,7 +27,9 @@ class Component {
   virtual void start(){};
 
   // called every frame
+  virtual void early_update(double, double){};
   virtual void update(double, double){};
+  virtual void late_update(double, double){};
 };
 
 class Transform : public Component {
@@ -100,7 +102,9 @@ class Object {
     throw std::runtime_error("no matching component");
   }
 
+  void early_update(double time, double delta_time);
   void update(double time, double delta_time);
+  void late_update(double time, double delta_time);
 };
 
 } // namespace Engine::Objects
