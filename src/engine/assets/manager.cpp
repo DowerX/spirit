@@ -1,7 +1,6 @@
 #include <engine/assets/manager.h>
 #include <engine/assets/material.h>
 #include <engine/assets/mesh.h>
-#include <engine/assets/model.h>
 #include <engine/assets/texture.h>
 #include <engine/graphics/shader.h>
 #include <memory>
@@ -24,10 +23,6 @@ template <>
 void Manager::set<Material>(const std::string& name, std::shared_ptr<Material> asset) {
   materials[name] = asset;
 }
-template <>
-void Manager::set<Model>(const std::string& name, std::shared_ptr<Model> asset) {
-  models[name] = asset;
-}
 
 template <>
 std::shared_ptr<Mesh> Manager::get<Mesh>(const std::string& name) {
@@ -44,10 +39,6 @@ std::shared_ptr<Texture> Manager::get<Texture>(const std::string& name) {
 template <>
 std::shared_ptr<Material> Manager::get<Material>(const std::string& name) {
   return materials[name];
-}
-template <>
-std::shared_ptr<Model> Manager::get<Model>(const std::string& name) {
-  return models[name];
 }
 
 template <>
@@ -66,8 +57,5 @@ template <>
 void Manager::remove<Material>(const std::string& name) {
   materials.erase(name);
 }
-template <>
-void Manager::remove<Model>(const std::string& name) {
-  models.erase(name);
-}
+
 } // namespace Engine::Assets

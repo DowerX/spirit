@@ -8,5 +8,4 @@ void Material::use() const {
     texture.second->bind(texture.first);
   }
 }
-
-}
+} // namespace Engine::Assets

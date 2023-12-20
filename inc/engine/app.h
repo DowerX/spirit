@@ -15,7 +15,7 @@ class App {
 
   Assets::Manager asset_manager;
 
-  float delta_time;
+  double delta_time;
 
   void process_input();
 

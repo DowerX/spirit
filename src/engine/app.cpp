@@ -1,9 +1,12 @@
 #include <GLFW/glfw3.h>
 #include <engine/app.h>
+#include <engine/utility.h>
 #include <glad/glad.h>
+#include <cstdint>
 #include <functional>
 #include <map>
 #include <stdexcept>
+#include <string>
 
 namespace Engine {
 
@@ -27,7 +30,8 @@ App::App(const Config& config) : width(config.width), height(config.height) {
 
   glfwMakeContextCurrent(window);
 
-  glfwSwapInterval(config.sync_interval);
+  // glfwSwapInterval(config.sync_interval);
+  glfwSwapInterval(0);
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     throw std::runtime_error("failed to initialize GLAD");
@@ -52,17 +56,36 @@ App::~App() {
 }
 
 void App::run(const std::function<void()>& loop) {
-  float last_time = 0;
+  double last_time = 0;
+
+#ifdef DEBUG
+  double last = 0;
+  uint32_t frame_count = 0;
+#endif
+
   while (!glfwWindowShouldClose(window)) {
+#ifdef DEBUG
+    frame_count++;
+    if (glfwGetTime() - last >= 1) {
+      glfwSetWindowTitle(window, std::to_string(frame_count / (glfwGetTime() - last)).c_str());
+      last = glfwGetTime();
+      frame_count = 0;
+    }
+#endif
+
     delta_time = glfwGetTime() - last_time;
     last_time = glfwGetTime();
-    
+
     glfwPollEvents();
     process_input();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     loop();
+
+    asset_manager.get_root_object()->update(glfwGetTime(), delta_time);
+
+    CHECK_ERRORS
 
     glfwSwapBuffers(window);
   }
