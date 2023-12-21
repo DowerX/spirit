@@ -8,6 +8,7 @@
 #include <engine/assets/texture.h>
 #include <engine/graphics/shader.h>
 #include <engine/objects/components/camera.h>
+#include <engine/objects/components/light.h>
 #include <engine/objects/components/mesh_renderer.h>
 #include <engine/objects/object.h>
 #include <engine/utility.h>
@@ -41,25 +42,41 @@ int main() {
     assets.set<Mesh>("cube", Loaders::obj("assets/meshes/cube/cube.obj"));
     assets.set<Mesh>("suzanne", Loaders::obj("assets/meshes/suzanne/suzanne.obj"));
     assets.set<Mesh>("plane", Loaders::obj("assets/meshes/plane/plane.obj"));
+    assets.set<Mesh>("sponza", Loaders::obj("assets/meshes/sponza/sponza.obj"));
 
     assets.set<Texture>("rloi_mc", Loaders::png("assets/textures/cube.png"));
+    assets.set<Texture>("sponza", Loaders::png("assets/textures/sponza.png"));
 
     assets.set<Material>("basic_rloi", std::make_shared<Material>(assets.get<Shader>("basic"), std::vector<TextureSlot>{{0, assets.get<Texture>("rloi_mc")}}));
+    assets.set<Material>("basic_sponza", std::make_shared<Material>(assets.get<Shader>("basic"), std::vector<TextureSlot>{{0, assets.get<Texture>("sponza")}}));
 
-    auto camera = assets.get_root_object()->add_child("camera");
+    auto root_object = assets.get_root_object();
+
+    // auto light = root_object->add_child("light");
+    // light->get_component<Transform>()->set_position(glm::vec3(0.0, 0.0, 0.3));
+    //auto light_component = light->add_component<Light>();
+
+    auto camera = root_object->add_child("camera");
     auto camera_transform = camera->get_component<Transform>();
     camera_transform->set_position(glm::vec3(0.0f, 0.0f, -0.3f));
     camera->add_component<Camera>();
     camera->add_component<CameraController>();
+    camera->add_component<Light>();
 
-    auto plane = assets.get_root_object()->add_child("plane");
-    auto plane_mesh_renderer = plane->add_component<MeshRenderer>();
-    plane_mesh_renderer->set_mesh(assets.get<Mesh>("plane"));
-    plane_mesh_renderer->set_material(assets.get<Material>("basic_rloi"));
-    auto plane_transform = plane->get_component<Transform>();
-    plane_transform->translate(glm::vec3(0, -0.2, 0));
+    // auto plane = root_object->add_child("plane");
+    // auto plane_mesh_renderer = plane->add_component<MeshRenderer>();
+    // plane_mesh_renderer->set_mesh(assets.get<Mesh>("plane"));
+    // plane_mesh_renderer->set_material(assets.get<Material>("basic_rloi"));
+    // auto plane_transform = plane->get_component<Transform>();
+    // plane_transform->translate(glm::vec3(0, -0.2, 0));
 
-    auto cube = assets.get_root_object()->add_child("cube");
+    auto sponza = root_object->add_child("sponza");
+    auto sponza_mesh_renderer = sponza->add_component<MeshRenderer>();
+    sponza_mesh_renderer->set_mesh(assets.get<Mesh>("sponza"));
+    sponza_mesh_renderer->set_material(assets.get<Material>("basic_sponza"));
+    sponza->get_component<Transform>()->set_scale(glm::vec3(0.5));
+
+    auto cube = root_object->add_child("cube");
     auto cube_mesh_renderer = cube->add_component<MeshRenderer>();
     cube_mesh_renderer->set_mesh(assets.get<Mesh>("cube"));
     cube_mesh_renderer->set_material(assets.get<Material>("basic_rloi"));
@@ -75,6 +92,8 @@ int main() {
     suzanne_transform->set_position(glm::vec3(3.0f, 0.0f, 0.0f));
     suzanne->add_component<Rotator>();
     suzanne->get_component<Rotator>()->set_scale(10);
+    suzanne->add_component<Light>();
+    suzanne->get_component<Light>()->set_color(glm::vec3(1, 0, 0));
 
     App::get_instance().run();
   } catch (std::exception& e) {

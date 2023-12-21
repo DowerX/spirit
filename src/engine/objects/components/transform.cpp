@@ -50,4 +50,9 @@ void Transform::local_rotate(const glm::vec3& rotation) {
   set_local_rotation(this->local_rotation);
 }
 
+glm::vec3 Transform::get_position() const {
+  Object* parent = get_owner().get_parent();
+  return (parent ? parent->get_component<Transform>()->get_transform() : identity) * glm::vec4(position, 1.0);
+}
+
 } // namespace Engine::Objects::Components

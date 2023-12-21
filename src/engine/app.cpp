@@ -111,6 +111,8 @@ void App::run() {
     last_time = time;
 
     Mouse::mouse_relative_reset();
+    asset_manager.reset_light_index();
+
     glfwPollEvents();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

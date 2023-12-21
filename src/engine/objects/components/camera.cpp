@@ -34,6 +34,7 @@ void Camera::early_update(double, double) {
     shader.second->use();
     shader.second->set<glm::mat4>("view", transform->get_transform());
     shader.second->set<glm::mat4>("projection", projection);
+    shader.second->set<glm::vec3>("view_pos", -transform->get_position());
   }
 }
 

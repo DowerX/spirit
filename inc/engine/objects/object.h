@@ -21,7 +21,7 @@ class Component {
   Component(Object& owner) : owner(owner) {}
   virtual ~Component() = default;
 
-  Object& get_owner() { return owner; }
+  Object& get_owner() const { return owner; }
 
   // called once
   virtual void start(){};
@@ -70,10 +70,14 @@ class Transform : public Component {
   void rotate(const glm::vec3& rotation);
   void local_rotate(const glm::vec3& rotation);
 
-  glm::vec3 get_position() const { return position; }
+  glm::vec3 get_position() const;
+  glm::vec3 get_local_position() const { return position; }
+
   glm::vec3 get_rotation() const { return rotation; }
   glm::vec3 get_local_rotation() const { return local_rotation; }
+
   glm::vec3 get_scale() const { return scale; }
+
   glm::mat4 get_transform() { return get_parent_matrix() * local_rotation_matrix * translation_matrix * rotation_matrix * scale_matrix; }
 };
 } // namespace Components

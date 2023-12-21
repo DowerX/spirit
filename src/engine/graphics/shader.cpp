@@ -114,6 +114,11 @@ void Shader::set<Vector<3, int>>(const std::string& name, const Vector<3, int>& 
 }
 
 template <>
+void Shader::set<glm::vec<3, float>>(const std::string& name, const glm::vec<3, float>& value) {
+  glUniform3fv(glGetUniformLocation(id, name.c_str()), 1, glm::value_ptr(value));
+}
+
+template <>
 void Shader::set<glm::mat4>(const std::string& name, const glm::mat4& value) {
   glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
