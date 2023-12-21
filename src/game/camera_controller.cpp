@@ -26,7 +26,6 @@ void CameraController::update(double, double delta_time) {
 
   glm::vec3 left(front.z, 0.0, -front.x);
 
-  transform->translate(
-      (front * ((float)get_key(GLFW_KEY_W) + -(float)get_key(GLFW_KEY_S)) + left * ((float)get_key(GLFW_KEY_A) + -(float)get_key(GLFW_KEY_D))) * speed *
-      (float)delta_time);
+  transform->translate((front * ((float)get_key(GLFW_KEY_W) - (float)get_key(GLFW_KEY_S)) + left * ((float)get_key(GLFW_KEY_A) - (float)get_key(GLFW_KEY_D))) *
+                       speed * (float)delta_time);
 }

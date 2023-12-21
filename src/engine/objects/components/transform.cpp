@@ -1,3 +1,4 @@
+#include <engine/objects/components/transform.h>
 #include <engine/objects/object.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <memory>
