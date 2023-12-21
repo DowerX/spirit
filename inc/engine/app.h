@@ -1,10 +1,9 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
-#include <cstdint>
+#include <engine/assets/manager.h>
 #include <functional>
 #include <string>
-#include "engine/assets/manager.h"
 
 namespace Engine {
 class App {
@@ -12,14 +11,20 @@ class App {
   GLFWwindow* window;
   uint32_t width;
   uint32_t height;
+  double delta_time;
 
   Assets::Manager asset_manager;
 
-  double delta_time;
-
-  void process_input();
+  App();
 
  public:
+  App(const App&) = delete;
+  void operator=(const App&) = delete;
+
+  static App& get_instance();
+
+  ~App();
+
   struct Config {
     int sync_interval;
     std::string title;
@@ -27,15 +32,15 @@ class App {
     uint32_t height;
     GLFWmonitor* monitor;
 
-    Config() {}
-    Config(int sync, const std::string& title, uint32_t width, uint32_t height, GLFWmonitor* monitor) : sync_interval(sync), title(title), width(width), height(height), monitor(monitor) {}
+    Config(int sync, const std::string& title, uint32_t width, uint32_t height, GLFWmonitor* monitor)
+        : sync_interval(sync), title(title), width(width), height(height), monitor(monitor) {}
+    Config(uint32_t width, uint32_t height) : Config(1, "Spirit", width, height, nullptr) {}
+    Config() : Config(800, 600) {}
   };
 
-  App(const Config& config);
-  App(uint32_t width, uint32_t height) : App(Config(1, "Spirit", width, height, nullptr)) {}
-  App() : App(800, 600) {}
-  ~App();
+  static void initialize(const Config& config);
 
+  GLFWwindow* get_window() const { return window; }
   uint32_t get_width() const { return width; }
   uint32_t get_height() const { return height; }
   float get_aspect_ratio() const { return (float)width / height; }
@@ -44,7 +49,7 @@ class App {
 
   Assets::Manager& get_asset_manager() { return asset_manager; }
 
-  void run(const std::function<void()>& loop);
+  void run();
 };
 
 } // namespace Engine

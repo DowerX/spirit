@@ -30,7 +30,7 @@ void Camera::set_aspect_ratio(float aspect_ratio) {
 }
 
 void Camera::early_update(double, double) {
-  for (auto& shader : manager->get_all<Shader>()) {
+  for (auto& shader : manager.get_all<Shader>()) {
     shader.second->use();
     shader.second->set<glm::mat4>("view", transform->get_transform());
     shader.second->set<glm::mat4>("projection", projection);

@@ -8,41 +8,46 @@ const glm::vec3 forward(0.0f, 0.0f, 1.0f);
 const glm::mat4 identity(1.0f);
 
 namespace Engine::Objects::Components {
-void Transform::set_transform_matrix() {
+glm::mat4 Transform::get_parent_matrix() {
   Object* parent = get_owner().get_parent();
-  transform_matrix = parent ? parent->get_component<Transform>()->get_transform() : identity;
-  transform_matrix = glm::translate(transform_matrix, position);
-  transform_matrix = glm::scale(transform_matrix, scale);
-
-  transform_matrix = glm::rotate(transform_matrix, glm::radians(rotation.x), left);
-  transform_matrix = glm::rotate(transform_matrix, glm::radians(rotation.y), up);
-  transform_matrix = glm::rotate(transform_matrix, glm::radians(rotation.z), forward);
-
-  for (auto child : get_owner().get_children()) {
-    child.second->get_component<Transform>()->set_transform_matrix();
-  }
+  return parent ? parent->get_component<Transform>()->get_transform() : identity;
 }
 
 void Transform::set_position(const glm::vec3& position) {
   this->position = position;
-  set_transform_matrix();
+  translation_matrix = glm::translate(identity, position);
 }
+
 void Transform::set_rotation(const glm::vec3& rotation) {
   this->rotation = rotation;
-  set_transform_matrix();
+  rotation_matrix = glm::rotate(identity, glm::radians(rotation.x), left);
+  rotation_matrix = glm::rotate(rotation_matrix, glm::radians(rotation.y), up);
+  rotation_matrix = glm::rotate(rotation_matrix, glm::radians(rotation.z), forward);
 }
+void Transform::set_local_rotation(const glm::vec3& rotation) {
+  this->local_rotation = rotation;
+  local_rotation_matrix = glm::rotate(identity, glm::radians(rotation.x), left);
+  local_rotation_matrix = glm::rotate(local_rotation_matrix, glm::radians(rotation.y), up);
+  local_rotation_matrix = glm::rotate(local_rotation_matrix, glm::radians(rotation.z), forward);
+}
+
 void Transform::set_scale(const glm::vec3& scale) {
   this->scale = scale;
-  set_transform_matrix();
+  scale_matrix = glm::scale(identity, scale);
 }
 
 void Transform::translate(const glm::vec3& translation) {
   position += translation;
-  set_transform_matrix();
+  set_position(this->position);
 }
+
 void Transform::rotate(const glm::vec3& rotation) {
   this->rotation += rotation;
-  set_transform_matrix();
+  set_rotation(this->rotation);
+}
+void Transform::local_rotate(const glm::vec3& rotation) {
+  this->local_rotation += rotation;
+  set_local_rotation(this->local_rotation);
 }
 
 } // namespace Engine::Objects::Components

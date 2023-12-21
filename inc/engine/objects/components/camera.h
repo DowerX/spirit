@@ -1,5 +1,6 @@
 #pragma once
 
+#include <engine/app.h>
 #include <engine/assets/manager.h>
 #include <engine/objects/object.h>
 #include <memory>
@@ -16,12 +17,19 @@ class Camera : public Component {
 
   std::shared_ptr<Transform> transform;
 
-  Assets::Manager* manager;
+  Assets::Manager& manager;
 
   void set_projection();
 
  public:
-  Camera(Object& owner) : Component(owner), fov(75.0f), near(0.001f), far(1000.0f), aspect_ratio(4.0f / 3), transform(owner.get_component<Transform>()) {
+  Camera(Object& owner)
+      : Component(owner),
+        fov(75.0f),
+        near(0.001f),
+        far(1000.0f),
+        aspect_ratio(4.0f / 3),
+        transform(owner.get_component<Transform>()),
+        manager(App::get_instance().get_asset_manager()) {
     set_projection();
   }
 
@@ -29,8 +37,6 @@ class Camera : public Component {
   void set_near(float near);
   void set_far(float far);
   void set_aspect_ratio(float aspect_ratio);
-
-  void set_asset_manager(Assets::Manager* manager) { this->manager = manager; }
 
   float get_fov() const { return fov; }
   float get_near() const { return near; }
