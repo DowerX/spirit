@@ -15,17 +15,14 @@ void CameraController::update(double, double delta_time) {
   look.y = -mouse.get_x_relative();
   transform->local_rotate(look * sensitivity * (float)delta_time);
 
-  float yaw = transform->get_local_rotation().y + 90;
-  float pitch = transform->get_local_rotation().x;
-
-  glm::vec3 front;
-  front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-  front.y = sin(glm::radians(pitch));
-  front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-  front = glm::normalize(front);
-
-  glm::vec3 left(front.z, 0.0, -front.x);
-
-  transform->translate((front * ((float)get_key(GLFW_KEY_W) - (float)get_key(GLFW_KEY_S)) + left * ((float)get_key(GLFW_KEY_A) - (float)get_key(GLFW_KEY_D))) *
-                       speed * (float)delta_time);
+  // transform->translate((
+  //   ((float)get_key(GLFW_KEY_A) - (float)get_key(GLFW_KEY_D))*transform->get_left()+
+  //   ((float)get_key(GLFW_KEY_SPACE) - (float)get_key(GLFW_KEY_LEFT_SHIFT))*transform->get_up()+
+  //   ((float)get_key(GLFW_KEY_W) - (float)get_key(GLFW_KEY_S))*transform->get_forward()
+  // ) * (float)delta_time * speed);
+  transform->local_translate(glm::vec3(
+    ((float)get_key(GLFW_KEY_A) - (float)get_key(GLFW_KEY_D)),
+    ((float)get_key(GLFW_KEY_SPACE) - (float)get_key(GLFW_KEY_LEFT_SHIFT)),
+    ((float)get_key(GLFW_KEY_W) - (float)get_key(GLFW_KEY_S))
+  ) * (float)delta_time * speed);
 }

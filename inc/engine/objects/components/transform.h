@@ -1,7 +1,11 @@
 #pragma once
 
 #include <engine/objects/components/component.h>
+#include <glm/common.hpp>
+#include <glm/fwd.hpp>
 #include <glm/glm.hpp>
+
+#include <memory>
 
 namespace Engine::Objects {
 class Object;
@@ -10,51 +14,58 @@ class Object;
 namespace Engine::Objects::Components {
 class Transform : public Component {
  private:
-  glm::vec3 position;
-  glm::mat4 translation_matrix;
+  glm::mat4 get_parent_transform() const;
+  void decompose();
+  void calculate();
 
-  glm::vec3 rotation;
-  glm::mat4 rotation_matrix;
-
+  glm::vec3 local_translation;
   glm::vec3 local_rotation;
-  glm::mat4 local_rotation_matrix;
+  glm::vec3 local_scale;
 
-  glm::vec3 scale;
-  glm::mat4 scale_matrix;
+  glm::vec3 global_translation;
+  glm::vec3 global_rotation;
+  glm::vec3 global_scale;
 
-  glm::mat4 get_parent_matrix();
+  glm::mat4 global_transform;
+
+  glm::vec3 left;
+  glm::vec3 up;
+  glm::vec3 forward;
 
  public:
-  Transform(Object& owner, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& local_rotation, const glm::vec3 scale) : Component(owner) {
-    set_position(position);
-    set_rotation(rotation);
-    set_local_rotation(local_rotation);
-    set_scale(scale);
+  Transform(Object& owner) : Component(owner), local_translation(0.0f), local_rotation(0.0f), local_scale(1.0f) { calculate(); }
+
+  void set_local_translation(const glm::vec3& value) {
+    local_translation = value;
+    calculate();
   }
-  Transform(Object& owner)
-      : Transform(owner, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f)) {}
+  void set_local_rotation(const glm::vec3& value) {
+    local_rotation = value;
+    calculate();
+  }
+  void set_local_scale(const glm::vec3& value) {
+    local_scale = value;
+    calculate();
+  }
 
-  void set_position(const glm::vec3& position);
+  const glm::vec3& get_local_translation() const { return local_translation; }
+  const glm::vec3& get_local_rotation() const { return local_rotation; }
+  const glm::vec3& get_local_scale() const { return local_scale; }
 
-  void set_rotation(const glm::vec3& rotation);
-  void set_local_rotation(const glm::vec3& local_rotation);
+  const glm::vec3& get_translation() const { return global_translation; }
+  const glm::vec3& get_rotation() const { return global_rotation; }
+  const glm::vec3& get_scale() const { return global_scale; }
 
-  void set_scale(const glm::vec3& scale);
+  const glm::mat4& get_transform() const { return global_transform; };
 
-  void translate(const glm::vec3& translation);
+  glm::vec3 get_forward() const { return forward; }
+  glm::vec3 get_left() const { return left; };
+  glm::vec3 get_up() const { return up; }
 
-  void rotate(const glm::vec3& rotation);
   void local_rotate(const glm::vec3& rotation);
 
-  glm::vec3 get_position() const;
-  glm::vec3 get_local_position() const { return position; }
-
-  glm::vec3 get_rotation() const { return rotation; }
-  glm::vec3 get_local_rotation() const { return local_rotation; }
-
-  glm::vec3 get_scale() const { return scale; }
-
-  glm::mat4 get_transform() { return get_parent_matrix() * local_rotation_matrix * translation_matrix * rotation_matrix * scale_matrix; }
+  void translate(const glm::vec3& translate);
+  void local_translate(const glm::vec3& translate);
 };
 
 } // namespace Engine::Objects::Components

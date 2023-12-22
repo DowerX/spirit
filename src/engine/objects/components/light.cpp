@@ -18,7 +18,7 @@ void Light::early_update(double, double) {
   for (auto& shader : manager.get_all<Shader>()) {
     shader.second->use();
     shader.second->set<glm::vec3>(element + ".color", color);
-    shader.second->set<glm::vec3>(element + ".position", -transform->get_position());
+    shader.second->set<glm::vec3>(element + ".position", transform->get_translation());
     shader.second->set<int>(element + ".type", type);
     shader.second->set<int>("light_count", index + 1);
   }

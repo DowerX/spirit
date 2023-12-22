@@ -52,8 +52,8 @@ void App::initialize(const Config& config) {
 
   glfwMakeContextCurrent(app.window);
 
-  glfwSwapInterval(0);
-  // glfwSwapInterval(config.sync_interval);
+  // glfwSwapInterval(0);
+  glfwSwapInterval(config.sync_interval);
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     throw std::runtime_error("failed to initialize GLAD");

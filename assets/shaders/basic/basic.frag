@@ -2,7 +2,7 @@
 
 #define MAX_LIGHTS 10
 
-in vec3 normal;
+in vec3 in_normal; vec3 normal;
 in vec2 tex_coord;
 in vec3 frag_pos;
 
@@ -35,6 +35,7 @@ vec3 calc_light(Light light) {
 }
 
 void main() {
+  normal = normalize(in_normal);
   vec3 result = vec3(0);
   for (int i = 0; i < light_count; i++) {
     result += calc_light(lights[i]);

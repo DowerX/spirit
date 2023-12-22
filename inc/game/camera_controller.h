@@ -13,7 +13,7 @@ class CameraController : public Engine::Objects::Components::Component {
  public:
   CameraController(Engine::Objects::Object& owner)
       : Engine::Objects::Components::Component(owner),
-        speed(0.5f),
+        speed(3.0f),
         sensitivity(100),
         transform(owner.get_component<Engine::Objects::Components::Transform>()) {}
 
