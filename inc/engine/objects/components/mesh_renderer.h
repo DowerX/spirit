@@ -13,7 +13,7 @@ class MeshRenderer : public Component {
   std::shared_ptr<Transform> transform;
 
  public:
-  MeshRenderer(Object& owner) : Component(owner), transform(owner.get_component<Transform>()) {}
+  MeshRenderer() {}
 
   void set_mesh(std::shared_ptr<Assets::Mesh> mesh) { this->mesh = mesh; }
   void set_material(std::shared_ptr<Assets::Material> material) { this->material = material; }
@@ -21,6 +21,7 @@ class MeshRenderer : public Component {
   std::shared_ptr<Assets::Mesh> get_mesh() { return mesh; }
   std::shared_ptr<Assets::Material> get_material() { return material; }
 
+  void start() override;
   void late_update(double, double) override;
 };
 } // namespace Engine::Objects::Components

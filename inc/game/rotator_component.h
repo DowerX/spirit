@@ -7,10 +7,10 @@ class Rotator : public Engine::Objects::Components::Component {
   float scale = 1.0f;
 
  public:
-  Rotator(Engine::Objects::Object& owner)
-      : Engine::Objects::Components::Component(owner), transform(owner.get_component<Engine::Objects::Components::Transform>()) {}
+  Rotator() {}
 
   void set_scale(float scale) { this->scale = scale; }
 
+  void start() override;
   void update(double time, double delta_time) override;
 };

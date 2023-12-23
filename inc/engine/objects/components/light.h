@@ -11,11 +11,12 @@ class Light : public Component {
  public:
   enum Type : int { POINT = 0, SPOT, AMBIENT };
 
-  Light(Object& owner) : Component(owner), type(POINT), color(glm::vec3(1.0f)), transform(owner.get_component<Transform>()) {}
+  Light() : type(POINT), color(glm::vec3(1.0f)) {}
 
   void set_type(Type type) { this->type = type; };
   void set_color(const glm::vec3& color) { this->color = color; };
 
+  void start() override;
   void early_update(double, double) override;
 
  private:

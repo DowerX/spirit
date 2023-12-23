@@ -6,6 +6,11 @@
 
 using namespace Engine::Input::Keyboard;
 using namespace Engine::Input;
+using namespace Engine::Objects::Components;
+
+void CameraController::start() {
+  transform = get_owner().get_component<Transform>();
+}
 
 void CameraController::update(double, double delta_time) {
   static Mouse& mouse = Mouse::get_instance();

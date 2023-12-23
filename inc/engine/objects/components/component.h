@@ -7,13 +7,14 @@ class Object;
 namespace Engine::Objects::Components {
 class Component {
  private:
-  Engine::Objects::Object& owner;
+  Engine::Objects::Object* owner;
 
  public:
-  Component(Object& owner) : owner(owner) {}
+  Component() {}
   virtual ~Component() = default;
 
-  Object& get_owner() const { return owner; }
+  void set_owner(Object* owner);
+  Object& get_owner() const { return *owner; }
 
   // called once
   virtual void start(){};

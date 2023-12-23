@@ -17,21 +17,12 @@ class Camera : public Component {
 
   std::shared_ptr<Transform> transform;
 
-  Assets::Manager& manager;
+  Assets::Manager* manager;
 
   void set_projection();
 
  public:
-  Camera(Object& owner)
-      : Component(owner),
-        fov(75.0f),
-        near(0.001f),
-        far(1000.0f),
-        aspect_ratio(4.0f / 3),
-        transform(owner.get_component<Transform>()),
-        manager(App::get_instance().get_asset_manager()) {
-    set_projection();
-  }
+  Camera() : fov(75.0f), near(0.001f), far(1000.0f), aspect_ratio(4.0f / 3) {}
 
   void set_fov(float fov);
   void set_near(float near);
@@ -43,6 +34,7 @@ class Camera : public Component {
   float get_far() const { return far; }
   float get_aspect_ratio() const { return aspect_ratio; }
 
+  void start() override;
   void early_update(double, double) override;
 };
 } // namespace Engine::Objects::Components

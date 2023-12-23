@@ -1,7 +1,12 @@
 #include <engine/objects/components/mesh_renderer.h>
 #include <glm/fwd.hpp>
+#include <engine/objects/components/transform.h>
 
 namespace Engine::Objects::Components {
+void MeshRenderer::start() {
+  transform = get_owner().get_component<Transform>();
+}
+
 void MeshRenderer::late_update(double, double) {
   material->use();
   material->get_shader()->set<glm::mat4>("model", transform->get_transform());

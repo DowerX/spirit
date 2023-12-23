@@ -22,6 +22,7 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
+#include <engine/objects/components/transform.h>
 
 using namespace Engine;
 using namespace Engine::Assets;
@@ -63,7 +64,7 @@ int main() {
     camera_transform->set_local_translation(glm::vec3(0.0f, 0.0f, -0.3f));
     camera->add_component<Camera>();
     camera->add_component<CameraController>();
-    camera->add_component<Light>();
+    // camera->add_component<Light>();
 
     auto sponza = root_object->add_child("sponza");
     auto sponza_mesh_renderer = sponza->add_component<MeshRenderer>();

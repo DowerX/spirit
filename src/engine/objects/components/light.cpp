@@ -4,11 +4,17 @@
 #include <cstddef>
 #include <memory>
 #include <string>
-#include "engine/utility.h"
+#include <engine/objects/components/transform.h>
+#include <engine/utility.h>
 
 using namespace Engine::Graphics;
 
 namespace Engine::Objects::Components {
+
+void Light::start() {
+  transform = get_owner().get_component<Transform>();
+}
+
 void Light::early_update(double, double) {
   static Assets::Manager& manager = App::get_instance().get_asset_manager();
 

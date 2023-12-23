@@ -33,7 +33,7 @@ class Transform : public Component {
   glm::vec3 forward;
 
  public:
-  Transform(Object& owner) : Component(owner), local_translation(0.0f), local_rotation(0.0f), local_scale(1.0f) { calculate(); }
+  Transform() : local_translation(0.0f), local_rotation(0.0f), local_scale(1.0f) { }
 
   void set_local_translation(const glm::vec3& value) {
     local_translation = value;
@@ -66,6 +66,8 @@ class Transform : public Component {
 
   void translate(const glm::vec3& translate);
   void local_translate(const glm::vec3& translate);
+
+  void start() override;
 };
 
 } // namespace Engine::Objects::Components

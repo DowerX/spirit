@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <type_traits>
 
 namespace Engine::Assets {
 class Manager {
@@ -23,6 +24,15 @@ class Manager {
   std::map<std::string, std::shared_ptr<Graphics::Shader>> shaders;
   std::map<std::string, std::shared_ptr<Mesh>> meshes;
 
+  template <typename T>
+  struct is_asset_type {
+    static constexpr bool value =
+      std::is_base_of<Material, T>::value ||
+      std::is_base_of<Texture, T>::value ||
+      std::is_base_of<Graphics::Shader, T>::value ||
+      std::is_base_of<Mesh, T>::value;
+  };
+
  public:
   Manager() : root_object(new Objects::Object()), light_index(0) {}
 
@@ -31,16 +41,16 @@ class Manager {
   size_t get_light_index() { return light_index++; }
   void reset_light_index() { light_index = 0; }
 
-  template <typename T>
+  template <typename T, typename = std::enable_if<is_asset_type<T>::value>::type>
   void set(const std::string& name, std::shared_ptr<T> asset);
 
-  template <typename T>
+  template <typename T, typename = std::enable_if<is_asset_type<T>::value>::type>
   std::shared_ptr<T> get(const std::string& name);
 
-  template <typename T>
+  template <typename T, typename = std::enable_if<is_asset_type<T>::value>::type>
   std::map<std::string, std::shared_ptr<T>>& get_all();
 
-  template <typename T>
+  template <typename T, typename = std::enable_if<is_asset_type<T>::value>::type>
   void remove(const std::string& name);
 };
 

@@ -13,6 +13,10 @@ const glm::vec3 world_forward(0, 0, 1);
 const glm::mat4 identity(glm::identity<glm::mat4>());
 
 namespace Engine::Objects::Components {
+void Transform::start() {
+  calculate();
+}
+
 glm::mat4 Transform::get_parent_transform() const {
   Object* parent = get_owner().get_parent();
   return parent ? parent->get_component<Transform>()->get_transform() : identity;
@@ -42,8 +46,7 @@ void Transform::decompose() {
 
   glm::decompose(global_transform, global_scale, global_rotation_quat, global_translation, skew, perspective);
 
-  global_rotation = glm::eulerAngles(global_rotation_quat);
-  global_rotation = glm::degrees(global_rotation);
+  global_rotation = glm::degrees(glm::eulerAngles(global_rotation_quat));
 }
 
 void Transform::translate(const glm::vec3& translation) {
