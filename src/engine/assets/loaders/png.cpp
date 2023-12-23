@@ -3,6 +3,10 @@
 #include <memory>
 #include <stdexcept>
 
+#ifdef BUNDLE
+#include <bundler/bundler.h>
+#endif
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
@@ -15,9 +19,16 @@ std::shared_ptr<Texture> png(const std::string& path) {
 
   stbi_set_flip_vertically_on_load(true);
 
+#ifndef BUNDLE
   uint8_t* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
   if (data == nullptr)
     throw std::runtime_error("failed to load PNG texture: " + path);
+#endif
+
+#ifdef BUNDLE
+  Bundler::Asset asset = Bundler::get_asset(path);
+  uint8_t* data = stbi_load_from_memory(asset.data, asset.len, &width, &height, &channels, 0);
+#endif
 
   GLenum format;
   switch (channels) {

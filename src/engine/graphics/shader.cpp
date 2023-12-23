@@ -11,6 +11,10 @@
 #include <stdexcept>
 #include <string>
 
+#ifdef BUNDLE
+#include <bundler/bundler.h>
+#endif
+
 using namespace Engine::Types;
 using namespace Engine::Utility;
 
@@ -59,8 +63,8 @@ Shader::~Shader() {
 }
 
 std::shared_ptr<Shader> Shader::from_file(const std::string& vert_path, const std::string& frag_path) {
+#ifndef BUNDLE
   std::stringstream sstream;
-
   std::ifstream vert_file(vert_path);
   if (!vert_file.is_open())
     throw std::runtime_error("failed to open vertex shader source: " + vert_path);
@@ -70,7 +74,13 @@ std::shared_ptr<Shader> Shader::from_file(const std::string& vert_path, const st
   std::string vert_src = sstream.str();
 
   sstream.str("");
+#endif
+#ifdef BUNDLE
+  Bundler::Asset asset = Bundler::get_asset(vert_path);
+  std::string vert_src((char*)asset.data, asset.len);
+#endif
 
+#ifndef BUNDLE
   std::ifstream frag_file(frag_path);
   if (!frag_file.is_open())
     throw std::runtime_error("failed to open fragment shader source: " + frag_path);
@@ -78,6 +88,11 @@ std::shared_ptr<Shader> Shader::from_file(const std::string& vert_path, const st
   sstream << frag_file.rdbuf();
   frag_file.close();
   std::string frag_src = sstream.str();
+#endif
+#ifdef BUNDLE
+  asset = Bundler::get_asset(frag_path);
+  std::string frag_src((char*)asset.data, asset.len);
+#endif
 
   return std::make_shared<Shader>(vert_src.c_str(), frag_src.c_str());
 }

@@ -6,9 +6,14 @@
 #include <fstream>
 #include <map>
 #include <memory>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+#ifdef BUNDLE
+#include <bundler/bundler.h>
+#endif
 
 using namespace Engine::Assets;
 using namespace Engine::Utility;
@@ -17,9 +22,16 @@ using namespace Engine::Types;
 
 namespace Engine::Assets::Loaders {
 std::shared_ptr<Mesh> obj(const std::string& path) {
+#ifndef BUNDLE
   std::ifstream file(path);
   if (!file.is_open())
     throw std::runtime_error("failed to open OBJ file: " + path);
+#endif
+#ifdef BUNDLE
+  Bundler::Asset asset = Bundler::get_asset(path);
+  std::string data((char*)asset.data, asset.len);
+  std::stringstream file(data);
+#endif
 
   std::vector<Vector<3, GLfloat>> vertices;
   std::vector<Vector<3, GLfloat>> normals;
@@ -49,8 +61,6 @@ std::shared_ptr<Mesh> obj(const std::string& path) {
       }
     }
   }
-
-  file.close();
 
   std::vector<GLfloat> buffer;
   std::vector<std::tuple<size_t, size_t, size_t, size_t>> sorted_points;

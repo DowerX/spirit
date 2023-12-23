@@ -38,7 +38,7 @@ int main() {
 
   // load assets
   try {
-    assets.set<Shader>("basic", Shader::from_file("assets/shaders/basic/basic.vert", "assets/shaders/basic/basic.frag"));
+    assets.set<Shader>("basic", Shader::from_file("assets/shaders/basic/vert.vert", "assets/shaders/basic/frag.frag"));
 
     assets.set<Mesh>("cube", Loaders::obj("assets/meshes/cube/cube.obj"));
     assets.set<Mesh>("suzanne", Loaders::obj("assets/meshes/suzanne/suzanne.obj"));
