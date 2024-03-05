@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.22)
 
 project("spirit" VERSION 1.0)
 
@@ -32,13 +32,13 @@ file(GLOB_RECURSE ENGINE_SOURCES "${CMAKE_SOURCE_DIR}/src/engine/*.cpp")
 add_library("engine" SHARED ${ENGINE_SOURCES})
 set_target_properties("engine" PROPERTIES VERSION ${PROJECT_VERSION})
 target_include_directories("engine" PRIVATE "${CMAKE_SOURCE_DIR}/inc")
-target_link_libraries("engine" glfw glm glad)
+target_link_libraries("engine" glfw glm::glm glad)
 
 # game
 file(GLOB_RECURSE GAME_SOURCES "${CMAKE_SOURCE_DIR}/src/game/*.cpp")
 add_executable("game.bin" ${GAME_SOURCES})
 target_include_directories("game.bin" PRIVATE "${CMAKE_SOURCE_DIR}/inc")
-target_link_libraries("game.bin" "engine" glm)
+target_link_libraries("game.bin" "engine" glm::glm)
 
 # bundle assets
 if (BUNDLE)
@@ -46,5 +46,5 @@ if (BUNDLE)
   file(GLOB_RECURSE BUNDLER_SOURCES "${CMAKE_SOURCE_DIR}/src/bundler/*.cpp" "${CMAKE_SOURCE_DIR}/build/bundler/*.c")
   add_library("assets" SHARED ${BUNDLER_SOURCES})
   target_include_directories("assets" PRIVATE "${CMAKE_SOURCE_DIR}/inc/bundler" "${CMAKE_SOURCE_DIR}/build/bundler")
-  target_link_libraries("game.bin" "assets" glfw glm glad)
+  target_link_libraries("game.bin" "assets" glfw glm::glm glad)
 endif()

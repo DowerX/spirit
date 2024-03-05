@@ -33,7 +33,7 @@ class Object {
   std::map<std::string, std::shared_ptr<Object>>& get_children() { return children; }
   std::shared_ptr<Object> get_child(const std::string& name) { return children[name]; }
 
-  template <typename T, typename = std::enable_if<std::is_base_of<Components::Component, T>::value>::type>
+  template <typename T, typename = typename std::enable_if<std::is_base_of<Components::Component, T>::value>::type>
   std::shared_ptr<T> add_component(std::shared_ptr<T> comp) {
     components.push_back(comp);
     comp->set_owner(this);
@@ -41,14 +41,14 @@ class Object {
     return comp;
   }
 
-  template <typename T, typename = std::enable_if<std::is_base_of<Components::Component, T>::value>::type>
+  template <typename T, typename = typename std::enable_if<std::is_base_of<Components::Component, T>::value>::type>
   std::shared_ptr<T> add_component() {
     return add_component<T>(std::make_shared<T>());
   }
 
   std::vector<std::shared_ptr<Components::Component>>& get_components() { return components; }
 
-  template <typename T, typename = std::enable_if<std::is_base_of<Components::Component, T>::value>::type>
+  template <typename T, typename = typename std::enable_if<std::is_base_of<Components::Component, T>::value>::type>
   std::shared_ptr<T> get_component() {
     std::shared_ptr<T> result;
     for (std::shared_ptr<Components::Component> comp : components) {

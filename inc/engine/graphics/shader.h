@@ -39,7 +39,7 @@ class Shader {
 
   static std::shared_ptr<Shader> from_file(const std::string& vert_path, const std::string& frag_path);
 
-  template <typename T, typename = std::enable_if<is_supported_type<T>::value>::type>
+  template <typename T, typename = typename std::enable_if<is_supported_type<T>::value>::type>
   void set(const std::string& name, const T& value);
 
   void use();

@@ -41,16 +41,16 @@ class Manager {
   size_t get_light_index() { return light_index++; }
   void reset_light_index() { light_index = 0; }
 
-  template <typename T, typename = std::enable_if<is_asset_type<T>::value>::type>
+  template <typename T, typename = typename std::enable_if<is_asset_type<T>::value>::type>
   void set(const std::string& name, std::shared_ptr<T> asset);
 
-  template <typename T, typename = std::enable_if<is_asset_type<T>::value>::type>
+  template <typename T, typename = typename std::enable_if<is_asset_type<T>::value>::type>
   std::shared_ptr<T> get(const std::string& name);
 
-  template <typename T, typename = std::enable_if<is_asset_type<T>::value>::type>
+  template <typename T, typename = typename std::enable_if<is_asset_type<T>::value>::type>
   std::map<std::string, std::shared_ptr<T>>& get_all();
 
-  template <typename T, typename = std::enable_if<is_asset_type<T>::value>::type>
+  template <typename T, typename = typename std::enable_if<is_asset_type<T>::value>::type>
   void remove(const std::string& name);
 };
 
