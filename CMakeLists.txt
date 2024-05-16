@@ -22,29 +22,37 @@ find_package(glfw3 3.3 REQUIRED)
 find_package(glm REQUIRED)
 find_package(OpenGL REQUIRED)
 
-# glad
-add_library("glad" SHARED "${CMAKE_SOURCE_DIR}/src/glad/glad.c")
-target_include_directories("glad" PRIVATE "${CMAKE_SOURCE_DIR}/inc")
-target_link_libraries("glad" OpenGL::OpenGL)
-
-# engine
-file(GLOB_RECURSE ENGINE_SOURCES "${CMAKE_SOURCE_DIR}/src/engine/*.cpp")
-add_library("engine" SHARED ${ENGINE_SOURCES})
-set_target_properties("engine" PROPERTIES VERSION ${PROJECT_VERSION})
-target_include_directories("engine" PRIVATE "${CMAKE_SOURCE_DIR}/inc")
-target_link_libraries("engine" glfw glm::glm glad)
-
-# game
-file(GLOB_RECURSE GAME_SOURCES "${CMAKE_SOURCE_DIR}/src/game/*.cpp")
-add_executable("game.bin" ${GAME_SOURCES})
-target_include_directories("game.bin" PRIVATE "${CMAKE_SOURCE_DIR}/inc")
-target_link_libraries("game.bin" "engine" glm::glm)
-
 # bundle assets
 if (BUNDLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUNDLE")
-  file(GLOB_RECURSE BUNDLER_SOURCES "${CMAKE_SOURCE_DIR}/src/bundler/*.cpp" "${CMAKE_SOURCE_DIR}/build/bundler/*.c")
-  add_library("assets" SHARED ${BUNDLER_SOURCES})
-  target_include_directories("assets" PRIVATE "${CMAKE_SOURCE_DIR}/inc/bundler" "${CMAKE_SOURCE_DIR}/build/bundler")
-  target_link_libraries("game.bin" "assets" glfw glm::glm glad)
+  file(GLOB_RECURSE BUNDLER_OBJECTS "${CMAKE_SOURCE_DIR}/build/bundler/*.o")
+  file(GLOB_RECURSE BUNDLER_SOURCES "${CMAKE_SOURCE_DIR}/src/bundler/*.cpp")
+  
+  add_library(assets SHARED ${BUNDLER_SOURCES})
+  target_include_directories(assets PRIVATE "${CMAKE_SOURCE_DIR}/inc/bundler" "${CMAKE_SOURCE_DIR}/build/bundler")
+  
+  target_link_libraries(assets ${BUNDLER_OBJECTS})
 endif()
+
+# glad
+add_library(glad SHARED "${CMAKE_SOURCE_DIR}/src/glad/glad.c")
+target_include_directories(glad PRIVATE "${CMAKE_SOURCE_DIR}/inc")
+target_link_libraries(glad PRIVATE OpenGL::OpenGL)
+
+# engine
+file(GLOB_RECURSE ENGINE_SOURCES "${CMAKE_SOURCE_DIR}/src/engine/*.cpp")
+add_library(engine SHARED ${ENGINE_SOURCES})
+set_target_properties(engine PROPERTIES VERSION ${PROJECT_VERSION})
+target_include_directories(engine PRIVATE "${CMAKE_SOURCE_DIR}/inc")
+target_link_libraries(engine PRIVATE glfw glm::glm glad OpenGL::OpenGL)
+
+if (BUNDLE)
+  target_link_directories(engine PRIVATE "${CMAKE_SOURCE_DIR}/build")
+  target_link_libraries(engine PRIVATE "libassets.so")
+endif()
+
+# game
+file(GLOB_RECURSE GAME_SOURCES "${CMAKE_SOURCE_DIR}/src/game/*.cpp")
+add_executable(game.bin ${GAME_SOURCES})
+target_include_directories(game.bin PRIVATE "${CMAKE_SOURCE_DIR}/inc")
+target_link_libraries(game.bin PRIVATE engine)
